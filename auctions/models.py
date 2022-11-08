@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 from datetime import datetime
 from .util import validateBid
 
@@ -54,14 +55,21 @@ class Listing(models.Model):
             TRAVEL = "33" ,"Travel"
             GAMES_CONSOLES = "34" ,"Video Games & Consoles"
             ELSE = "35" ,"Everything Else"
+    
+    lister = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2, default=0, max_digits=7)
     image = models.URLField(null=True, blank=True)
     category = models.CharField(max_length=30, choices=Category.choices, default=Category.DEFAULT,null=True, blank=True)
+    
     dateCreated = datetime.now()
     bids = []
-    lister = defaultUsernameField
+    
+
+    def get_absolute_url(self):
+        return reverse("index")
+    
 
 class Comment(models.Model):
     commenter = defaultUsernameField
