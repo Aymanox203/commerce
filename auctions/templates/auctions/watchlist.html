@@ -1,0 +1,17 @@
+{%extends "auctions/layout.html"%}
+{% block title %}
+WatchList
+{% endblock title %}
+<h1>WatchList</h1>
+{% block body %}
+    {% if empty %}
+        <div class="alert alert-warning">
+            <h2 class="alert-heading">No items in your watchlist</h2>
+            <p>Listings added to your watchlist will appear here</p>
+        </div>
+    {% else %}
+        {% for object in objects %}
+            {% include 'ListingList.html' with obj=object%}
+        {% endfor %}
+    {% endif %}
+{% endblock body %}

@@ -1,16 +1,20 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView
+from django.views.generic import CreateView,DetailView
 
 from .models import User,Listing
 from .forms import ListingForm
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    listings = Listing.objects.all()
+    context={
+        "listings":listings
+    }
+    return render(request, "auctions/index.html", context)
 
 
 def login_view(request):
@@ -64,16 +68,59 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-    
+def watchlistEdit(request,*args,**kwargs):
+    if request.method=='POST':
+        id_=request.POST['id']
+        listing = get_object_or_404(Listing,id=id_)
+        user = request.user
+        if user in listing.watchlist.all():
+            listing.watchlist.remove(user)
+        else: listing.watchlist.add(user)
+        return HttpResponseRedirect(reverse('ListingDetail',kwargs={'id':id_}))
+    if request.method=='GET':
+        return HttpResponseRedirect(reverse('watchlist'))
+
+def watchlist(request,*args,**kwargs):
+    listings=Listing.objects.filter(watchlist=request.user)
+    if len(listings)==0:
+        empty=True
+    else: empty=False
+    context={
+        'objects':listings,
+        'empty':empty
+    }
+    return render(request,'auctions/watchlist.html',context)
+
+def detailView(request,id):
+    listing=Listing.objects.get(id=id)
+    inWatchlist=""
+    if request.user in listing.watchlist.all():
+        inWatchlist="Remove from watchlist"
+    else: inWatchlist="Add to watchlist"
+    context={
+        'object':listing,
+        'inWatchlist':inWatchlist
+    }
+    return render(request,'auctions/detailListing.html',context)
+
+
 class ListingCreateView(CreateView):
     template_name = 'auctions/createListing.html'
     form_class = ListingForm
     queryset = Listing.objects.all()
-    def __init__(self,*args, **kwargs):
-        
-        super().__init__(**kwargs)
-    
-    
-        
 
-
+# class ListingDetailViews(DetailView):
+#     queryset = Listing.objects.all()
+#     template_name = 'auctions/detailListing.html'
+#     def get_context_data(self, **kwargs):
+#         context =super().get_context_data(**kwargs)
+#         user = self.request.user
+#         obj=Listing.objects.get(id=kwargs['id'])
+#         inWatchlist="Add to watchlist"
+#         context["inWatchlist"]=inWatchlist
+#         if user in obj.watchlist:
+#             context['inWatchlist']="Remove from watchlist"
+#         return context
+#     def get_object(self):
+#         id_= self.kwargs.get('id')
+#         return get_object_or_404(Listing,id=id_)

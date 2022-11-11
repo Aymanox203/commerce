@@ -4,19 +4,10 @@ from django.urls import reverse
 from datetime import datetime
 from .util import validateBid
 
-defaultUsernameField = models.CharField(max_length=50, blank=False, null=False, unique=True)
 
 class User(AbstractUser):
     pass
 
-class Bid(models.Model):
-    amount = models.DecimalField(decimal_places=2,
-    default=1,
-    max_digits=7,
-    validators=[validateBid])
-    
-    bider = defaultUsernameField
-    dateCreated = datetime.now()
 
 class Listing(models.Model):
     class Category(models.TextChoices):
@@ -56,22 +47,31 @@ class Listing(models.Model):
             GAMES_CONSOLES = "34" ,"Video Games & Consoles"
             ELSE = "35" ,"Everything Else"
     
-    lister = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True)
+    lister = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True,related_name='lister')
     title = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2, default=0, max_digits=7)
     image = models.URLField(null=True, blank=True)
     category = models.CharField(max_length=30, choices=Category.choices, default=Category.DEFAULT,null=True, blank=True)
-    
     dateCreated = datetime.now()
-    bids = []
-    
+    watchlist = models.ManyToManyField(User,related_name='watchlist')
 
     def get_absolute_url(self):
-        return reverse("index")
+        return reverse("ListingDetail", kwargs={'id':self.id})
     
+class Bid(models.Model):
+    amount = models.DecimalField(decimal_places=2,
+    default=1,
+    max_digits=7,
+    validators=[validateBid])
+    listing=models.ForeignKey(Listing,on_delete=models.CASCADE, default=1)
+    bider = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+    dateCreated = datetime.now()
+
 
 class Comment(models.Model):
-    commenter = defaultUsernameField
+    commenter = models.ForeignKey(User, on_delete=models.CASCADE,default=1)
+    listing= models.ForeignKey(Listing, on_delete=models.CASCADE,default=1)
     content = models.TextField()
     dateCreated = datetime.now()

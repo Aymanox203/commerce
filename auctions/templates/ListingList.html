@@ -1,0 +1,12 @@
+
+<a href={% url 'ListingDetail' obj.id%}>
+    <div class="listing-container">
+        <img src="{{obj.image}}" class="listing-image" alt="No Photo">
+        <div class="listing-contained">
+            <h3 style="color:#007bff">{{obj.title}}</h3>
+            <p>{{obj.description}}</p>
+            <strong>{{obj.price}} $</strong>
+        </div>
+    </div>
+</a>
+

@@ -1,0 +1,23 @@
+{% extends 'auctions/layout.html' %}
+{% block body %}
+<div class="detail"> 
+    <div class="detail-container">
+        <h3 class="title">{{object.title}}</h3>
+        <img class="item-image" src="{{object.image}}">
+        <div class="contained">
+            <strong class="price">{{object.price}} $</strong>
+            <p class="description">{{object.description}}</p> 
+        </div>
+    </div>
+    <div class="bidding">  
+        <form class="button-right" action="{% url 'watchlistEdit'%}" method="POST">{% csrf_token %}
+            <input type="text" name="id" hidden value="{{object.id}}">
+            <input type="submit" id="watchlist" class="btn btn-primary" value="{{inWatchlist}}">
+        </form>
+        <form method="POST" class="bid-form  input-group mb-3">{% csrf_token %}
+            <input type="number" class="form-control" step="10">
+            <input type="submit" class="btn btn-primary" value="Place bid">
+        </form>  
+    </div>
+</div>
+{% endblock body %}
