@@ -9,15 +9,24 @@
             <p class="description">{{object.description}}</p> 
         </div>
     </div>
-    <div class="bidding">  
-        <form class="button-right" action="{% url 'watchlistEdit'%}" method="POST">{% csrf_token %}
-            <input type="text" name="id" hidden value="{{object.id}}">
-            <input type="submit" id="watchlist" class="btn btn-primary" value="{{inWatchlist}}">
-        </form>
-        <form method="POST" class="bid-form  input-group mb-3">{% csrf_token %}
-            <input type="number" class="form-control" step="10">
-            <input type="submit" class="btn btn-primary" value="Place bid">
-        </form>  
-    </div>
+    {% if user.is_authenticated %}
+        <div class="bidding">  
+            <form class="button-right" action="{% url 'watchlistEdit'%}" method="POST">{% csrf_token %}
+                <input type="text" name="id" hidden value="{{object.id}}">
+                <input type="submit" id="watchlist" class="btn btn-primary" value="{{inWatchlist}}">
+            </form>
+            <form method="POST" class="bid-form  input-group mb-3">{% csrf_token %}
+                {{bidForm.as_p}}
+                <input type="submit" class="btn btn-primary" value="Place bid">
+            </form>
+            <h4>All bids:</h4>
+            <ul class="top-bids">
+                {% for bid in bidList %}
+                <li class="top-bids-item">{{bid}}</li>
+                {% endfor %}
+            </ul>
+            
+        </div>
+    {% endif %}
 </div>
 {% endblock body %}

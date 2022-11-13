@@ -5,8 +5,8 @@ from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView,DetailView
 
-from .models import User,Listing
-from .forms import ListingForm
+from .models import User,Listing,Bid
+from .forms import ListingForm,BidForm
 
 
 def index(request):
@@ -93,13 +93,22 @@ def watchlist(request,*args,**kwargs):
 
 def detailView(request,id):
     listing=Listing.objects.get(id=id)
+    user = request.user
     inWatchlist=""
     if request.user in listing.watchlist.all():
         inWatchlist="Remove from watchlist"
     else: inWatchlist="Add to watchlist"
+    bidForm = BidForm(request.POST or None,bider=user,aListing=listing)
+    if bidForm.is_valid():
+            bidForm.save()
+            bidForm = BidForm()
+    allBids = Bid.objects.filter(listing=listing).order_by('-amount')
+    
     context={
         'object':listing,
-        'inWatchlist':inWatchlist
+        'inWatchlist':inWatchlist,
+        'bidForm':bidForm,
+        'bidList':allBids,
     }
     return render(request,'auctions/detailListing.html',context)
 

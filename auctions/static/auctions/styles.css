@@ -27,4 +27,13 @@ a, a:hover, a:visited, a:active {
 }
 .listing-contained > *{
     margin: auto 0;
+
 }
+.top-bids-item{
+    list-style: none;
+}
+.top-bids-item:first-child{
+    color:red;
+}
+
+

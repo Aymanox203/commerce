@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
+import datetime
 # Register your models here.
 
 class ListingAdmin(admin.ModelAdmin):
@@ -14,6 +15,20 @@ class ListingAdmin(admin.ModelAdmin):
         obj.save()
         return super(ListingAdmin,self).save_model(self,request,obj,**kwargs)
 
+class BidAdmin(admin.ModelAdmin):
+    readonly_fields=['bider','dateCreated']
+    def get_form(self,request,obj=None,**kwargs):
+        Bid.bider = request.user
+        Bid.listing = kwargs.get('id')
+        Bid.dateCreated = datetime.datetime.now()
+        return super(BidAdmin,self).get_form(request, obj, **kwargs)
+    
+    def save_model(self,request,obj,**kwargs):
+        obj.bider = request.user
+        obj.listing = kwargs.get('id')
+        obj.save()
+        return super(BidAdmin,self).save_model(self,request,obj,**kwargs)
+
 class CommentAdmin(admin.ModelAdmin):
     readonly_fields=['commenter']
     def get_form(self,request,obj=None,**kwargs):
@@ -26,6 +41,6 @@ class CommentAdmin(admin.ModelAdmin):
         return super().save_model(self,request,obj,**kwargs)
 
 admin.site.register(User)
-admin.site.register(Bid)
+admin.site.register(Bid,BidAdmin)
 admin.site.register(Listing,ListingAdmin)
 admin.site.register(Comment,CommentAdmin)

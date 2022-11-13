@@ -1,12 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
-from datetime import datetime
-from .util import validateBid
+import datetime
+
 
 
 class User(AbstractUser):
     pass
+    
+    
+    
 
 
 class Listing(models.Model):
@@ -44,8 +47,10 @@ class Listing(models.Model):
             TICKETS = "31" ,"Tickets & Experiences"
             TOYS = "32" ,"Toys & Hobbies"
             TRAVEL = "33" ,"Travel"
-            GAMES_CONSOLES = "34" ,"Video Games & Consoles"
-            ELSE = "35" ,"Everything Else"
+            VEHICLES = "34","Vehicles"
+            GAMES_CONSOLES = "35" ,"Video Games & Consoles"
+            ELSE = "36" ,"Everything Else"
+    
     
     lister = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True,related_name='lister')
     title = models.CharField(max_length=100, blank=False, null=False)
@@ -53,25 +58,30 @@ class Listing(models.Model):
     price = models.DecimalField(decimal_places=2, default=0, max_digits=7)
     image = models.URLField(null=True, blank=True)
     category = models.CharField(max_length=30, choices=Category.choices, default=Category.DEFAULT,null=True, blank=True)
-    dateCreated = datetime.now()
+    dateCreated = models.DateField(default=datetime.datetime.now,null=False)
     watchlist = models.ManyToManyField(User,related_name='watchlist')
+    
+    def __str__(self):
+        return self.title
 
     def get_absolute_url(self):
         return reverse("ListingDetail", kwargs={'id':self.id})
     
 class Bid(models.Model):
     amount = models.DecimalField(decimal_places=2,
-    default=1,
-    max_digits=7,
-    validators=[validateBid])
+        default=1,
+        max_digits=7)
     listing=models.ForeignKey(Listing,on_delete=models.CASCADE, default=1)
     bider = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
-    dateCreated = datetime.now()
-
+    dateCreated = models.DateField(default=datetime.datetime.now,null=False)
+    
+    def __str__(self):
+        return str(self.amount)
+    
 
 class Comment(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE,default=1)
     listing= models.ForeignKey(Listing, on_delete=models.CASCADE,default=1)
     content = models.TextField()
-    dateCreated = datetime.now()
+    dateCreated = models.DateField(default=datetime.datetime.now,null=False)

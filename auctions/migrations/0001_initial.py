@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('bider', models.CharField(max_length=50, unique=True)),
-                ('amount', models.DecimalField(decimal_places=2, default=1, max_digits=7, validators=[auctions.util.validateBid])),
+                ('amount', models.DecimalField(decimal_places=2, default=1, max_digits=7)),
             ],
         ),
         migrations.CreateModel(
