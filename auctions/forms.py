@@ -24,6 +24,9 @@ class BidForm(forms.ModelForm):
         fields = [
             'amount'
         ]
+        widgets = {
+            'amount':forms.NumberInput(attrs={'class':'form-control form-control-lg','placeholder':'Bid'})
+        }
     
     def __init__(self,*args, **kwargs):
         self.bider = kwargs.pop('bider',None)

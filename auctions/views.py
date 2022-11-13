@@ -102,6 +102,7 @@ def detailView(request,id):
     if bidForm.is_valid():
             bidForm.save()
             bidForm = BidForm()
+            return HttpResponseRedirect(reverse('ListingDetail',kwargs={'id':id}))
     allBids = Bid.objects.filter(listing=listing).order_by('-amount')
     
     context={
