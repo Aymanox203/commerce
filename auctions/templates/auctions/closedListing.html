@@ -1,0 +1,32 @@
+{% extends 'auctions/layout.html' %}
+{% block title %}{{object}}-CLosed{% endblock title %}
+{% block body %}
+    {% if is_lister %}
+    <div class="detail"> 
+        <div class="detail-container">
+            <h3 class="title">{{object.title}}</h3>
+            <img class="item-image" src="{{object.image}}">
+            <div class="contained">
+                <label>By:<strong>{{object.lister}}</strong></label>
+                <strong class="price">{{object.price}} $</strong>
+                <p class="description">{{object.description}}</p> 
+            </div>
+        </div>
+        <div class="left">
+            <h3>Status: Closed</h3>
+            {% if winner != None %}
+                <label>Winner: <strong>{{winner}}</strong></label>
+            {% else %}
+                <label>Listing closed with no bids!</label>
+            {% endif %}
+            {% if user == winner %}
+            <div class="alert alert-success" role="alert">
+                <h4 class="alert-heading">You won the auction!</h4>
+            </div>
+            {% endif %}
+            
+
+        </div>
+    </div>
+    {% endif %}
+{% endblock body %}
