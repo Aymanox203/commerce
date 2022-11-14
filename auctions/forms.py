@@ -34,6 +34,8 @@ class BidForm(forms.ModelForm):
         super(BidForm,self).__init__(*args,**kwargs)    
     
     def clean_amount(self,*args,**kwargs):
+        if self.bider == self.listing.lister:
+            raise forms.ValidationError("You can't do that!")
         data = self.cleaned_data["amount"]
         if data<self.listing.price:
             raise forms.ValidationError("New Bid must be higher than stating price")

@@ -10,7 +10,7 @@ from .forms import ListingForm,BidForm
 
 
 def index(request):
-    listings = Listing.objects.all()
+    listings = Listing.objects.filter(is_actif=True)
     context={
         "listings":listings
     }
@@ -93,6 +93,8 @@ def watchlist(request,*args,**kwargs):
 
 def detailView(request,id):
     listing=Listing.objects.get(id=id)
+    if listing.is_actif==False:
+        return closedView(request,id=id)
     user = request.user
     inWatchlist=""
     if request.user in listing.watchlist.all():
@@ -101,10 +103,11 @@ def detailView(request,id):
     bidForm = BidForm(request.POST or None,bider=user,aListing=listing)
     if bidForm.is_valid():
             bidForm.save()
+            listing.watchlist.add(user) #adding the Listing to watchlist after bidding
             bidForm = BidForm()
             return HttpResponseRedirect(reverse('ListingDetail',kwargs={'id':id}))
     allBids = Bid.objects.filter(listing=listing).order_by('-amount')
-    
+
     context={
         'object':listing,
         'inWatchlist':inWatchlist,
@@ -113,6 +116,37 @@ def detailView(request,id):
     }
     return render(request,'auctions/detailListing.html',context)
 
+def listingClose(request,*args,**kwargs):
+    if request.method == 'POST':
+        id_=request.POST['id']
+        listing = get_object_or_404(Listing,id=id_)
+        print("request.user= ",request.user,"  lister= ",listing.lister)
+        if not request.user==listing.lister:
+            print("request.user=",request.user,"  lister=",listing.lister)
+            return HttpResponseRedirect(reverse('index'))
+        else:
+            listing.is_actif=False
+            listing.save()
+    return HttpResponseRedirect(reverse('ListingDetail',kwargs={'id':id_}))
+
+def closedView(request,id):
+    listing = get_object_or_404(Listing,id=id)
+    winner = None
+    try:
+        bids = Bid.objects.filter(listing=listing).order_by('-amount')
+        winner = bids[0].bider
+    except:
+        pass
+    
+    is_lister = False
+    if request.user==listing.lister:
+        is_lister = True
+    context = {
+        'object':listing,
+        'is_lister':is_lister,
+        'winner':winner
+    }
+    return render(request,'auctions/closedListing.html',context)
 
 class ListingCreateView(CreateView):
     template_name = 'auctions/createListing.html'

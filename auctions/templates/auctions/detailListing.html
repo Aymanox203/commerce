@@ -5,12 +5,13 @@
         <h3 class="title">{{object.title}}</h3>
         <img class="item-image" src="{{object.image}}">
         <div class="contained">
+            <label>By:<strong>{{object.lister}}</strong></label>
             <strong class="price">{{object.price}} $</strong>
             <p class="description">{{object.description}}</p> 
         </div>
     </div>
     {% if user.is_authenticated %}
-        <div class="bidding">  
+        <div class="left">  
             <form class="button-right" action="{% url 'watchlistEdit'%}" method="POST">{% csrf_token %}
                 <input type="text" name="id" hidden value="{{object.id}}">
                 <input type="submit" id="watchlist" class="btn btn-primary" value="{{inWatchlist}}">
@@ -19,6 +20,12 @@
                 {{bidForm.as_p}}
                 <input type="submit" class="btn btn-primary" value="Place bid">
             </form>
+            
+                <form method="POST" class="input-group mb-3" action="{% url 'listingClose' %}">{% csrf_token %}
+                    <input type="text" name="id" hidden value="{{object.id}}">
+                    <input type="submit" class="btn btn-danger" value="Close auction">
+                </form>
+            
             <h4>All bids:</h4>
             <ul class="top-bids">
                 {% for bid in bidList %}

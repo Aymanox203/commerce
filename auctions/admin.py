@@ -23,6 +23,8 @@ class BidAdmin(admin.ModelAdmin):
         Bid.dateCreated = datetime.datetime.now()
         return super(BidAdmin,self).get_form(request, obj, **kwargs)
     
+
+    
     def save_model(self,request,obj,**kwargs):
         obj.bider = request.user
         obj.listing = kwargs.get('id')

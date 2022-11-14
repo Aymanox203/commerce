@@ -6,7 +6,9 @@ import datetime
 
 
 class User(AbstractUser):
-    pass
+    def __str__(self):
+        return self.username
+    
     
     
     
@@ -52,7 +54,7 @@ class Listing(models.Model):
             ELSE = "36" ,"Everything Else"
     
     
-    lister = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True,related_name='lister')
+    lister = models.ForeignKey(User, on_delete=models.CASCADE, null=False,default=1,related_name='lister')
     title = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2, default=0, max_digits=7)
@@ -60,6 +62,7 @@ class Listing(models.Model):
     category = models.CharField(max_length=30, choices=Category.choices, default=Category.DEFAULT,null=True, blank=True)
     dateCreated = models.DateField(default=datetime.datetime.now,null=False)
     watchlist = models.ManyToManyField(User,related_name='watchlist')
+    is_actif = models.BooleanField(default=True, null=True)
     
     def __str__(self):
         return self.title
