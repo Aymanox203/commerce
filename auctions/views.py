@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import CreateView,DetailView
 
 from .models import User,Listing,Bid,Comment
-from .forms import ListingForm,BidForm,commentForm
+from .forms import ListingForm,BidForm,commentForm,listingCategoriesForm
 
 
 def index(request):
@@ -157,6 +157,19 @@ def closedView(request,id):
     }
     return render(request,'auctions/closedListing.html',context)
 
+def ListingCategoryView(request):
+    queryset = Listing.objects.filter(is_actif=True)
+    form = listingCategoriesForm(request.GET or None)
+    if form.is_valid():
+        category = form.cleaned_data['category']
+        if not category==Listing.Category.DEFAULT:
+            queryset = Listing.objects.filter(is_actif=True).filter(category=category)
+        else: pass
+    context={
+        'objects':queryset,
+        'form':form
+    }
+    return render(request,'auctions/ListingCategory.html',context)
 
 
 class ListingCreateView(CreateView):

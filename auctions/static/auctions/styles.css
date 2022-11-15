@@ -35,6 +35,16 @@ a, a:hover, a:visited, a:active {
 .top-bids-item:first-child{
     color:red;
 }
+.category-form{
+    margin-left:20px;
+}
+#id_category{
+    max-width: 400px;
+    width:40vw;
+}
+#select-btn{
+    margin-top:15px;
+}
 
 
 
