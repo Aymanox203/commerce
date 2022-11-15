@@ -61,6 +61,11 @@ class commentForm(forms.ModelForm):
         self.listing = kwargs.pop('listing',None)
         super(commentForm,self).__init__(*args,**kwargs)
 
+class listingCategoriesForm(forms.Form):
+    category = forms.ChoiceField(choices = Listing.Category.choices,
+        initial=Listing.Category.DEFAULT,
+        widget=forms.Select(attrs={'class':'form-control'})
+    )
 
             
     
