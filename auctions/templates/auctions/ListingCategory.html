@@ -1,0 +1,13 @@
+{% extends 'auctions/layout.html' %}
+{% block title%}Listing categories{% endblock %}
+
+{%block body%}
+<h2>Choose a category</h2>
+<form method="GET" class="category-form">
+    {{form}}
+    <input type="submit" value="Search" class="btn btn-primary" id="select-btn">
+</form>
+{% for object in objects %}
+{% include 'ListingList.html' with obj=object %}
+{% endfor %}
+{% endblock %}
