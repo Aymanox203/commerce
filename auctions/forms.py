@@ -42,10 +42,25 @@ class BidForm(forms.ModelForm):
         if Bid.objects.filter(listing = self.listing).exists():
             queryset = Bid.objects.filter(listing = self.listing)
             for bid in queryset:
-                print(f"amount: {bid.amount}")
                 if data <= bid.amount:
                     raise forms.ValidationError("New Bid must be higher than the previous bids")
         return data
+
+class commentForm(forms.ModelForm):
+    class Meta:
+        model=Comment
+        fields=[
+            'content'
+        ]
+    widgets={
+        'content':forms.TextInput(attrs={'class':'form-control','hidden':'true'})
+    }
+
+    def __init__(self,*args,**kwargs):
+        self.commenter = kwargs.pop('commenter',None)
+        self.listing = kwargs.pop('listing',None)
+        super(commentForm,self).__init__(*args,**kwargs)
+
 
             
     

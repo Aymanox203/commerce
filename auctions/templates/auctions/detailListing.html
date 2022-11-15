@@ -36,4 +36,25 @@
         </div>
     {% endif %}
 </div>
+<div class="commentSection">
+    {% if user.is_authenticated %}
+        <h3>Add comment:</h3>
+        <form method="POST">{% csrf_token %}
+            {{commentForm.content}}
+            <input type="submit" value="Add comment" class="btn btn-primary">
+        </form>
+    {% endif %}
+    <div class="comments">
+        {% if CommentList %}
+            <ul>
+                {% for comment in CommentList %}
+                    <li>
+                        <strong>{{comment.commenter}}</strong><br>
+                        <p>{{comment.content}}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}    
+    </div>
+</div>
 {% endblock body %}

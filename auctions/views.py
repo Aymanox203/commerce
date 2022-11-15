@@ -5,8 +5,8 @@ from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView,DetailView
 
-from .models import User,Listing,Bid
-from .forms import ListingForm,BidForm
+from .models import User,Listing,Bid,Comment
+from .forms import ListingForm,BidForm,commentForm
 
 
 def index(request):
@@ -102,17 +102,28 @@ def detailView(request,id):
     else: inWatchlist="Add to watchlist"
     bidForm = BidForm(request.POST or None,bider=user,aListing=listing)
     if bidForm.is_valid():
-            bidForm.save()
+            bid = Bid(listing=listing,bider=user,amount=bidForm.clean_amount())
+            bid.save()
             listing.watchlist.add(user) #adding the Listing to watchlist after bidding
             bidForm = BidForm()
             return HttpResponseRedirect(reverse('ListingDetail',kwargs={'id':id}))
     allBids = Bid.objects.filter(listing=listing).order_by('-amount')
+    commentF = commentForm(request.POST or None,commenter = user,listing = listing)
+    if commentF.is_valid():
+        print("Commenter",commentF.commenter)
+        comment = Comment(commenter=user,listing=listing,content=commentF.cleaned_data['content'])
+        comment.save()
+        commentF = commentForm()
 
+    allComments=Comment.objects.filter(listing=listing)
+    
     context={
         'object':listing,
         'inWatchlist':inWatchlist,
         'bidForm':bidForm,
         'bidList':allBids,
+        'CommentList':allComments,
+        'commentForm':commentF
     }
     return render(request,'auctions/detailListing.html',context)
 
@@ -120,9 +131,7 @@ def listingClose(request,*args,**kwargs):
     if request.method == 'POST':
         id_=request.POST['id']
         listing = get_object_or_404(Listing,id=id_)
-        print("request.user= ",request.user,"  lister= ",listing.lister)
         if not request.user==listing.lister:
-            print("request.user=",request.user,"  lister=",listing.lister)
             return HttpResponseRedirect(reverse('index'))
         else:
             listing.is_actif=False
@@ -148,10 +157,19 @@ def closedView(request,id):
     }
     return render(request,'auctions/closedListing.html',context)
 
+
+
 class ListingCreateView(CreateView):
     template_name = 'auctions/createListing.html'
     form_class = ListingForm
     queryset = Listing.objects.all()
+
+
+
+
+
+
+
 
 # class ListingDetailViews(DetailView):
 #     queryset = Listing.objects.all()

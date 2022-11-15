@@ -11,9 +11,6 @@ class User(AbstractUser):
     
     
     
-    
-
-
 class Listing(models.Model):
     class Category(models.TextChoices):
             DEFAULT = "0" ,"All Categories"
