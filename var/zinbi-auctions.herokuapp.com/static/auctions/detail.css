@@ -1,0 +1,58 @@
+.detail{
+    display: flex;
+    background-color: #e4e4e4;
+    border-radius:1px;
+    width:70%;
+    min-width: 760px;
+}
+.detail>div{
+    background-color: #a5c1ec;
+    border-radius: 4px;
+    padding: 5px;
+}
+.item-image{
+    width:45vw;
+    display: inline;
+    margin-right: 20px;
+    border-radius:3px;
+}
+.detail-container{
+    margin:30px;
+    width:auto;
+    
+}
+.left{
+    max-width: 400px;
+    margin: 30px 15px;
+    width:50vw;
+}
+.button-right{
+    text-align: right;
+}
+
+.contained{
+    width:auto;
+    display:flex;
+    flex-direction: column;
+    width:45vw;
+}
+.contained > strong{
+    margin: auto 0;
+    text-align: right;
+    font-size: 20px;
+}
+.bid-form{
+    margin-top: 50px;
+    display: block;
+    text-align: left;
+    font-size: large;
+}
+.bid-form>input{
+    max-width: 200px;
+    margin:10px 0;
+}
+
+#watchlist{
+    width:auto;
+    white-space: nowrap; 
+}

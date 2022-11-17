@@ -123,4 +123,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 # Added
+STATIC_ROOT="var/zinbi-auctions.herokuapp.com/static"
 LOGIN_URL='/login'
